@@ -31,9 +31,10 @@ TEMP_ADJUST = 15
 TEMP_MIN, TEMP_MAX = 16, 30
 
 # Limites del protocolo arriba; abajo, los que acepta de verdad este equipo.
-# En frio no baja de 18: los botones de 16 y 17 no hacian nada.
-COOL_TEMP_MIN = 18
-HEAT_TEMP_MIN = TEMP_MIN
+# En frio el rango util es 18-28: fuera de ahi los botones no hacian nada.
+# En calor no esta comprobado todavia, asi que se deja el rango completo.
+COOL_TEMP_MIN, COOL_TEMP_MAX = 18, 28
+HEAT_TEMP_MIN, HEAT_TEMP_MAX = TEMP_MIN, TEMP_MAX
 
 POWER_ON, POWER_OFF = 0b00, 0b11
 
@@ -166,7 +167,7 @@ def build_full():
     out.append(block("OFF_CAPTURA_REAL", CAPTURE_LG2_OFF))
 
     # --- frio: barrido de temperatura con ventilador automatico
-    for t in range(COOL_TEMP_MIN, TEMP_MAX + 1):
+    for t in range(COOL_TEMP_MIN, COOL_TEMP_MAX + 1):
         lg2("FRIO_%d_AUTO" % t, lg_state(True, MODE_COOL, t, FAN_AUTO))
 
     # --- frio: velocidades de ventilador a 24 C
@@ -175,7 +176,7 @@ def build_full():
         lg2("FRIO_24_%s" % etiqueta, lg_state(True, MODE_COOL, 24, fan))
 
     # --- calor: barrido de temperatura con ventilador automatico
-    for t in range(HEAT_TEMP_MIN, TEMP_MAX + 1):
+    for t in range(HEAT_TEMP_MIN, HEAT_TEMP_MAX + 1):
         lg2("CALOR_%d_AUTO" % t, lg_state(True, MODE_HEAT, t, FAN_AUTO))
 
     # --- calor: velocidades de ventilador a 22 C
