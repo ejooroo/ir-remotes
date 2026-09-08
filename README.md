@@ -69,9 +69,18 @@ Notas:
 | Dispositivo | Fichero | Estado |
 |---|---|---|
 | Midea Solunar EF-24RD1 (24.000 BTU) | `ACs/Midea_EF-24RD1_TEST.ir` | Pendiente de identificar la familia de protocolo |
+| LG conductos + control de pared MEZ61995616 | `ACs/LG_MEZ61995616_TEST.ir` | Pendiente de identificar la variante (LG / LG2) |
 
-El mando de este equipo es de la serie **RG10**, que en
+**Midea**: el mando de este equipo es de la serie **RG10**, que en
 [IRremoteESP8266](https://github.com/crankyoldgit/IRremoteESP8266) corresponde al
 protocolo **Bosch144**. Los otros dos candidatos son **Coolix** (mandos RG52) y
 **Midea** de 48 bits (mandos RG57/RG66). El fichero `_TEST` contiene señales de los
 tres para averiguar cuál responde; ver `tools/gen_midea_ir.py`.
+
+**LG**: unidad de conductos gobernada por un controlador de pared por cable
+`MEZ61995616` (familia `PQRCVSL0` / `PREMTB001`) que lleva receptor de infrarrojos.
+El protocolo LG es de 28 bits con firma `0x88` y solo tiene dos variantes de
+temporización, **LG** (cabecera 8500/4250 µs) y **LG2** (3200/9900 µs), con
+contenido idéntico. El generador `tools/gen_lg_ir.py` está validado contra capturas
+reales de Flipper-IRDB: reproduce exactamente `0x880094D` (frío 24 °C, ventilador
+máximo) y los checksums de `0x88C0051` y `0x8810001`.
