@@ -69,7 +69,7 @@ Notas:
 | Dispositivo | Fichero | Estado |
 |---|---|---|
 | Midea Solunar EF-24RD1 (24.000 BTU) | `ACs/Midea_EF-24RD1_TEST.ir` | Pendiente de identificar la familia de protocolo |
-| LG conductos + control de pared MEZ61995616 | `ACs/LG_conductos_MEZ61995616.ir` | **Funcionando** — variante LG2 confirmada en el equipo |
+| LG conductos + control de pared MEZ61995616 | `ACs/LG_MEZ61995616.ir` | **Funcionando** — variante LG2 confirmada en el equipo |
 
 **Midea**: el mando de este equipo es de la serie **RG10**, que en
 [IRremoteESP8266](https://github.com/crankyoldgit/IRremoteESP8266) corresponde al
@@ -104,6 +104,6 @@ que permite el protocolo:
   formato y no el equipo.
 
 ```
-python tools/gen_lg_ir.py ACs/LG_conductos_MEZ61995616.ir full
+python tools/gen_lg_ir.py ACs/LG_MEZ61995616.ir full
 python tools/gen_lg_ir.py /tmp/prueba.ir test    # fichero de identificación
 ```
