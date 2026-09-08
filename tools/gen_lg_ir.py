@@ -139,12 +139,68 @@ def build():
     return "".join(out)
 
 
+def build_full():
+    """Mando completo, ya sabiendo que el equipo responde a LG2."""
+    out = ["Filetype: IR signals file\nVersion: 1\n"]
+    out.append(
+        "# LG conductos + controlador de pared MEZ61995616\n"
+        "# Variante LG2 (cabecera 3200/9900 us), confirmada en el equipo.\n"
+        "# Cada boton envia el estado completo: modo + temperatura + ventilador.\n"
+        "# No existen botones +/- porque el protocolo no funciona asi.\n"
+    )
+
+    def lg2(name, value):
+        out.append(block(name, raw(value, 'LG2')))
+
+    # --- basicos
+    lg2("OFF", CMD_OFF)
+    out.append(block("OFF_CAPTURA_REAL", CAPTURE_LG2_OFF))
+    lg2("SWING_VERTICAL", CMD_SWING_V_TOGGLE)
+    lg2("LUZ_DISPLAY", CMD_LIGHT_TOGGLE)
+
+    # --- frio: barrido de temperatura con ventilador automatico
+    for t in range(TEMP_MIN, TEMP_MAX + 1):
+        lg2("FRIO_%d_AUTO" % t, lg_state(True, MODE_COOL, t, FAN_AUTO))
+
+    # --- frio: velocidades de ventilador a 24 C
+    for etiqueta, fan in [("V1_MINIMA", FAN_LOWEST), ("V2_BAJA", FAN_LOW),
+                          ("V3_MEDIA", FAN_MEDIUM), ("V4_MAXIMA", FAN_MAX)]:
+        lg2("FRIO_24_%s" % etiqueta, lg_state(True, MODE_COOL, 24, fan))
+
+    # --- calor: barrido de temperatura con ventilador automatico
+    for t in range(TEMP_MIN, TEMP_MAX + 1):
+        lg2("CALOR_%d_AUTO" % t, lg_state(True, MODE_HEAT, t, FAN_AUTO))
+
+    # --- calor: velocidades de ventilador a 22 C
+    for etiqueta, fan in [("V1_MINIMA", FAN_LOWEST), ("V2_BAJA", FAN_LOW),
+                          ("V3_MEDIA", FAN_MEDIUM), ("V4_MAXIMA", FAN_MAX)]:
+        lg2("CALOR_22_%s" % etiqueta, lg_state(True, MODE_HEAT, 22, fan))
+
+    # --- resto de modos
+    lg2("SECO_24_AUTO", lg_state(True, MODE_DRY, 24, FAN_AUTO))
+    lg2("AUTO_24", lg_state(True, MODE_AUTO, 24, FAN_AUTO))
+    for etiqueta, fan in [("V2_BAJA", FAN_LOW), ("V3_MEDIA", FAN_MEDIUM),
+                          ("V4_MAXIMA", FAN_MAX)]:
+        lg2("VENTILACION_%s" % etiqueta, lg_state(True, MODE_FAN, 24, fan))
+
+    # --- velocidades exclusivas del mando AKB74955603, por si acaso
+    out.append("# Solo las acepta la variante AKB74955603; probar si las de\n"
+               "# arriba no cambian la velocidad.\n")
+    lg2("ALT_FRIO_24_BAJA_AKB74955603",
+        lg_state(True, MODE_COOL, 24, FAN_LOW_ALT))
+    lg2("ALT_FRIO_24_ALTA_AKB74955603",
+        lg_state(True, MODE_COOL, 24, FAN_HIGH))
+
+    return "".join(out)
+
+
 if __name__ == "__main__":
     import sys
     dest = sys.argv[1]
+    modo = sys.argv[2] if len(sys.argv) > 2 else "full"
     with open(dest, "w", encoding="utf-8", newline="\n") as fh:
-        fh.write(build())
-    print("escrito:", dest)
+        fh.write(build_full() if modo == "full" else build())
+    print("escrito:", dest, "(%s)" % modo)
 
     # --- comprobaciones contra las capturas reales de Flipper-IRDB
     casos = [

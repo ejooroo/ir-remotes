@@ -69,7 +69,7 @@ Notas:
 | Dispositivo | Fichero | Estado |
 |---|---|---|
 | Midea Solunar EF-24RD1 (24.000 BTU) | `ACs/Midea_EF-24RD1_TEST.ir` | Pendiente de identificar la familia de protocolo |
-| LG conductos + control de pared MEZ61995616 | `ACs/LG_MEZ61995616_TEST.ir` | Pendiente de identificar la variante (LG / LG2) |
+| LG conductos + control de pared MEZ61995616 | `ACs/LG_conductos_MEZ61995616.ir` | **Funcionando** — variante LG2 confirmada en el equipo |
 
 **Midea**: el mando de este equipo es de la serie **RG10**, que en
 [IRremoteESP8266](https://github.com/crankyoldgit/IRremoteESP8266) corresponde al
@@ -79,8 +79,18 @@ tres para averiguar cuál responde; ver `tools/gen_midea_ir.py`.
 
 **LG**: unidad de conductos gobernada por un controlador de pared por cable
 `MEZ61995616` (familia `PQRCVSL0` / `PREMTB001`) que lleva receptor de infrarrojos.
-El protocolo LG es de 28 bits con firma `0x88` y solo tiene dos variantes de
-temporización, **LG** (cabecera 8500/4250 µs) y **LG2** (3200/9900 µs), con
-contenido idéntico. El generador `tools/gen_lg_ir.py` está validado contra capturas
-reales de Flipper-IRDB: reproduce exactamente `0x880094D` (frío 24 °C, ventilador
-máximo) y los checksums de `0x88C0051` y `0x8810001`.
+El protocolo LG es de 28 bits con firma `0x88` y tiene dos variantes de
+temporización con contenido idéntico: **LG** (cabecera 8500/4250 µs) y **LG2**
+(3200/9900 µs). **Este equipo responde a LG2**, coherente con que su mando
+inalámbrico de fábrica sea de la familia comercial `AKB73315611` / `AKB74955603`.
+
+El generador `tools/gen_lg_ir.py` está validado contra capturas reales de
+Flipper-IRDB: construyendo la trama desde sus campos reproduce exactamente
+`0x880094D` (frío, 24 °C, ventilador máximo), y los checksums de `0x88C0051`,
+`0x8810001` y `0x88C00A6` salen correctos. Las 49 señales del fichero final se
+decodifican de vuelta y coinciden con lo que promete el nombre de cada botón.
+
+```
+python tools/gen_lg_ir.py ACs/LG_conductos_MEZ61995616.ir full
+python tools/gen_lg_ir.py /tmp/prueba.ir test    # fichero de identificación
+```
