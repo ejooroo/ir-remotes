@@ -87,7 +87,7 @@ inalámbrico de fábrica sea de la familia comercial `AKB73315611` / `AKB7495560
 El generador `tools/gen_lg_ir.py` está validado contra capturas reales de
 Flipper-IRDB: construyendo la trama desde sus campos reproduce exactamente
 `0x880094D` (frío, 24 °C, ventilador máximo), y los checksums de `0x88C0051`,
-`0x8810001` y `0x88C00A6` salen correctos. Las 43 señales del fichero final se
+`0x8810001` y `0x88C00A6` salen correctos. Las 35 señales del fichero final se
 decodifican de vuelta y coinciden con lo que promete el nombre de cada botón.
 
 El fichero se ha ajustado a lo que el equipo acepta de verdad, que es menos que lo
@@ -96,11 +96,12 @@ que permite el protocolo:
 - **Sin swing vertical ni luz de display.** Ambos códigos son válidos y el equipo
   los ignora, algo esperable en una unidad de conductos: no tiene lamas orientables
   ni display propio.
-- **Frío solo de 18 a 28 °C**, no los 16–30 °C del protocolo. Fuera de ese rango los
-  botones no hacían nada. Los límites reales de la instalación viven en
-  `COOL_TEMP_MIN` / `COOL_TEMP_MAX` / `HEAT_TEMP_MIN` / `HEAT_TEMP_MAX`, separados a
-  propósito de los del protocolo (`TEMP_MIN` / `TEMP_MAX`), que describen el formato
-  y no el equipo. Calor sigue con el rango completo, pendiente de comprobar.
+- **Rangos de temperatura recortados a lo que el equipo acepta**: frío **18–28 °C** y
+  calor **20–26 °C**, frente a los 16–30 °C que permite el protocolo. Fuera de esos
+  rangos el código emitido es válido pero la unidad lo ignora. Los cuatro límites
+  reales viven en `COOL_TEMP_MIN` / `COOL_TEMP_MAX` / `HEAT_TEMP_MIN` /
+  `HEAT_TEMP_MAX`, separados a propósito de `TEMP_MIN` / `TEMP_MAX`, que describen el
+  formato y no el equipo.
 
 ```
 python tools/gen_lg_ir.py ACs/LG_conductos_MEZ61995616.ir full

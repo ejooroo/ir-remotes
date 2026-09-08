@@ -31,10 +31,10 @@ TEMP_ADJUST = 15
 TEMP_MIN, TEMP_MAX = 16, 30
 
 # Limites del protocolo arriba; abajo, los que acepta de verdad este equipo.
-# En frio el rango util es 18-28: fuera de ahi los botones no hacian nada.
-# En calor no esta comprobado todavia, asi que se deja el rango completo.
+# Ambos rangos comprobados en la instalacion: fuera de ellos los botones
+# no hacian nada, aunque el codigo emitido sea valido.
 COOL_TEMP_MIN, COOL_TEMP_MAX = 18, 28
-HEAT_TEMP_MIN, HEAT_TEMP_MAX = TEMP_MIN, TEMP_MAX
+HEAT_TEMP_MIN, HEAT_TEMP_MAX = 20, 26
 
 POWER_ON, POWER_OFF = 0b00, 0b11
 
