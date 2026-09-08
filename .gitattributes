@@ -1,0 +1,6 @@
+# Los .ir se sirven tal cual por raw.githubusercontent y los parsea la app:
+# forzar LF evita cualquier sorpresa con finales de línea en Windows.
+*.ir text eol=lf
+*.md text eol=lf
+*.py text eol=lf
+.gitignore text eol=lf
