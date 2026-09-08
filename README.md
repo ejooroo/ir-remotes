@@ -87,8 +87,12 @@ inalámbrico de fábrica sea de la familia comercial `AKB73315611` / `AKB7495560
 El generador `tools/gen_lg_ir.py` está validado contra capturas reales de
 Flipper-IRDB: construyendo la trama desde sus campos reproduce exactamente
 `0x880094D` (frío, 24 °C, ventilador máximo), y los checksums de `0x88C0051`,
-`0x8810001` y `0x88C00A6` salen correctos. Las 49 señales del fichero final se
+`0x8810001` y `0x88C00A6` salen correctos. Las 47 señales del fichero final se
 decodifican de vuelta y coinciden con lo que promete el nombre de cada botón.
+
+El fichero **no incluye swing vertical ni luz del display**: ambos códigos son
+válidos y el equipo los ignora, algo esperable en una unidad de conductos, que no
+tiene lamas orientables ni display propio.
 
 ```
 python tools/gen_lg_ir.py ACs/LG_conductos_MEZ61995616.ir full

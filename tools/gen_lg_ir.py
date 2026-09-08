@@ -123,7 +123,8 @@ def build():
                      raw(lg_state(True, MODE_COOL, 24, FAN_MEDIUM), 'LG2')))
     out.append(block("A4_LG2_CALOR_22_AUTO",
                      raw(lg_state(True, MODE_HEAT, 22, FAN_AUTO), 'LG2')))
-    out.append(block("A5_LG2_SWING_V", raw(CMD_SWING_V_TOGGLE, 'LG2')))
+    # Sin swing: en esta instalacion (conductos) no hace nada, asi que como
+    # senal de prueba solo daria falsos negativos.
     out.append(block("A6_LG2_OFF_CAPTURA_REAL", CAPTURE_LG2_OFF))
 
     # --- Grupo B: LG
@@ -153,10 +154,11 @@ def build_full():
         out.append(block(name, raw(value, 'LG2')))
 
     # --- basicos
+    # No se emiten SWING_VERTICAL (0x8810001) ni LUZ_DISPLAY (0x88C00A6):
+    # probados en el equipo y no hacen nada. Es coherente con una unidad de
+    # conductos, que no tiene lamas orientables ni display propio.
     lg2("OFF", CMD_OFF)
     out.append(block("OFF_CAPTURA_REAL", CAPTURE_LG2_OFF))
-    lg2("SWING_VERTICAL", CMD_SWING_V_TOGGLE)
-    lg2("LUZ_DISPLAY", CMD_LIGHT_TOGGLE)
 
     # --- frio: barrido de temperatura con ventilador automatico
     for t in range(TEMP_MIN, TEMP_MAX + 1):
