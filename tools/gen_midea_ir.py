@@ -204,40 +204,41 @@ def block(name, seq):
 def build_test_file():
     out = ["Filetype: IR signals file\nVersion: 1\n"]
     out.append("# Midea EF-24RD1 (Solunar) - fichero de IDENTIFICACION de protocolo\n"
-               "# Prueba los botones por grupos: A (RG10/Bosch144), B (Coolix/RG52),\n"
-               "# C (Midea 48-bit / RG57-RG66). Anota cual hace reaccionar al equipo.\n")
+               "# La letra final de cada boton dice de que familia es la senal:\n"
+               "#   A = RG10/Bosch144   B = Coolix/RG52   C = Midea 48 bits/RG57-RG66\n"
+               "# Anota cual hace reaccionar al equipo.\n")
 
     # --- Grupo A: familia RG10 / Bosch144
-    out.append(block("A1_RG10_ON_AUTO_25", bosch_raw(BOSCH_DEFAULT)))
-    out.append(block("A2_RG10_OFF", bosch_raw(BOSCH_OFF)))
-    out.append(block("A3_RG10_FRIO_24_AUTO",
+    out.append(block("✳ Auto 25° A", bosch_raw(BOSCH_DEFAULT)))
+    out.append(block("⏻ Apagar A", bosch_raw(BOSCH_OFF)))
+    out.append(block("❄ 24° A",
                      bosch_raw(bosch_state(BOSCH_COOL, 24, BOSCH_FAN_AUTO))))
-    out.append(block("A4_RG10_CALOR_22_AUTO",
+    out.append(block("☀ 22° A",
                      bosch_raw(bosch_state(BOSCH_HEAT, 22, BOSCH_FAN_AUTO))))
     # Variante con FanS3 igual a la captura real del mando (50 en vez de 51)
-    out.append(block("A5_RG10_FRIO_24_AUTO_v2",
+    out.append(block("❄ 24° A bis",
                      bosch_raw(bosch_state(BOSCH_COOL, 24, BOSCH_FAN_AUTO,
                                            fan_s3_delta=-1))))
     # Velocidad fija: no depende de la constante ambigua de "auto"
-    out.append(block("A6_RG10_FRIO_24_VENT_MEDIO",
+    out.append(block("❄ 24° media A",
                      bosch_raw(bosch_state(BOSCH_COOL, 24, BOSCH_FAN60))))
 
     # --- Grupo B: familia Coolix / RG52
-    out.append(block("B1_COOLIX_OFF", coolix_raw(0xB27BE0)))
-    out.append(block("B2_COOLIX_FRIO_24_AUTO",
+    out.append(block("⏻ Apagar B", coolix_raw(0xB27BE0)))
+    out.append(block("❄ 24° B",
                      coolix_raw(coolix_state(COOLIX_COOL, 24, COOLIX_FAN_AUTO))))
-    out.append(block("B3_COOLIX_CALOR_22_AUTO",
+    out.append(block("☀ 22° B",
                      coolix_raw(coolix_state(COOLIX_HEAT, 22, COOLIX_FAN_AUTO))))
-    out.append(block("B4_COOLIX_SWING", coolix_raw(0xB26BE0)))
+    out.append(block("⇅ Oscilar B", coolix_raw(0xB26BE0)))
 
     # --- Grupo C: familia Midea 48-bit / RG57-RG66
-    out.append(block("C1_MIDEA48_OFF",
+    out.append(block("⏻ Apagar C",
                      midea_raw(midea_state(False, MIDEA_AUTO, 24, MIDEA_FAN_AUTO))))
-    out.append(block("C2_MIDEA48_FRIO_24_AUTO",
+    out.append(block("❄ 24° C",
                      midea_raw(midea_state(True, MIDEA_COOL, 24, MIDEA_FAN_AUTO))))
-    out.append(block("C3_MIDEA48_CALOR_22_AUTO",
+    out.append(block("☀ 22° C",
                      midea_raw(midea_state(True, MIDEA_HEAT, 22, MIDEA_FAN_AUTO))))
-    out.append(block("C4_MIDEA48_SWING", midea_raw(0xA201FFFFFF7C)))
+    out.append(block("⇅ Oscilar C", midea_raw(0xA201FFFFFF7C)))
 
     return "".join(out)
 
