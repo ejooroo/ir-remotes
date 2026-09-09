@@ -210,7 +210,7 @@ def build_test_file():
 
     # --- Grupo A: familia RG10 / Bosch144
     out.append(block("✳ Auto 25° A", bosch_raw(BOSCH_DEFAULT)))
-    out.append(block("⏻ Apagar A", bosch_raw(BOSCH_OFF)))
+    out.append(block("✘ Apagar A", bosch_raw(BOSCH_OFF)))
     out.append(block("❄ 24° A",
                      bosch_raw(bosch_state(BOSCH_COOL, 24, BOSCH_FAN_AUTO))))
     out.append(block("☀ 22° A",
@@ -224,7 +224,7 @@ def build_test_file():
                      bosch_raw(bosch_state(BOSCH_COOL, 24, BOSCH_FAN60))))
 
     # --- Grupo B: familia Coolix / RG52
-    out.append(block("⏻ Apagar B", coolix_raw(0xB27BE0)))
+    out.append(block("✘ Apagar B", coolix_raw(0xB27BE0)))
     out.append(block("❄ 24° B",
                      coolix_raw(coolix_state(COOLIX_COOL, 24, COOLIX_FAN_AUTO))))
     out.append(block("☀ 22° B",
@@ -232,7 +232,7 @@ def build_test_file():
     out.append(block("⇅ Oscilar B", coolix_raw(0xB26BE0)))
 
     # --- Grupo C: familia Midea 48-bit / RG57-RG66
-    out.append(block("⏻ Apagar C",
+    out.append(block("✘ Apagar C",
                      midea_raw(midea_state(False, MIDEA_AUTO, 24, MIDEA_FAN_AUTO))))
     out.append(block("❄ 24° C",
                      midea_raw(midea_state(True, MIDEA_COOL, 24, MIDEA_FAN_AUTO))))
