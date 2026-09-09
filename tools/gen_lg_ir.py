@@ -36,6 +36,13 @@ TEMP_MIN, TEMP_MAX = 16, 30
 COOL_TEMP_MIN, COOL_TEMP_MAX = 18, 28
 HEAT_TEMP_MIN, HEAT_TEMP_MAX = 20, 26
 
+# De todo el rango que acepta el equipo, solo se sacan a botones las
+# temperaturas que se usan de verdad. Menos botones, mando mas usable.
+COOL_TEMPS = (20, 24, 26)
+HEAT_TEMPS = (20, 24)
+# Temperatura sobre la que se ofrecen las velocidades de ventilador.
+FAN_DEMO_TEMP = 24
+
 POWER_ON, POWER_OFF = 0b00, 0b11
 
 MODE_COOL, MODE_DRY, MODE_FAN, MODE_AUTO, MODE_HEAT = 0, 1, 2, 3, 4
@@ -163,40 +170,43 @@ def build_full():
     # No se emiten SWING_VERTICAL (0x8810001) ni LUZ_DISPLAY (0x88C00A6):
     # probados en el equipo y no hacen nada. Es coherente con una unidad de
     # conductos, que no tiene lamas orientables ni display propio.
-    lg2("OFF", CMD_OFF)
-    out.append(block("OFF_CAPTURA_REAL", CAPTURE_LG2_OFF))
+    lg2(u"\u2b55 Apagar", CMD_OFF)
+    out.append(block(u"\u2b55 Apagar (captura)", CAPTURE_LG2_OFF))
 
-    # --- frio: barrido de temperatura con ventilador automatico
-    for t in range(COOL_TEMP_MIN, COOL_TEMP_MAX + 1):
-        lg2("FRIO_%d_AUTO" % t, lg_state(True, MODE_COOL, t, FAN_AUTO))
+    # --- frio, ventilador automatico
+    for t in COOL_TEMPS:
+        lg2(u"\u2744 %d\u00b0" % t, lg_state(True, MODE_COOL, t, FAN_AUTO))
 
-    # --- frio: velocidades de ventilador a 24 C
-    for etiqueta, fan in [("V1_MINIMA", FAN_LOWEST), ("V2_BAJA", FAN_LOW),
-                          ("V3_MEDIA", FAN_MEDIUM), ("V4_MAXIMA", FAN_MAX)]:
-        lg2("FRIO_24_%s" % etiqueta, lg_state(True, MODE_COOL, 24, fan))
+    # --- frio: velocidades de ventilador
+    for etiqueta, fan in [(u"minima", FAN_LOWEST), (u"baja", FAN_LOW),
+                          (u"media", FAN_MEDIUM), (u"maxima", FAN_MAX)]:
+        lg2(u"\u2744 %d\u00b0 %s" % (FAN_DEMO_TEMP, etiqueta),
+            lg_state(True, MODE_COOL, FAN_DEMO_TEMP, fan))
 
-    # --- calor: barrido de temperatura con ventilador automatico
-    for t in range(HEAT_TEMP_MIN, HEAT_TEMP_MAX + 1):
-        lg2("CALOR_%d_AUTO" % t, lg_state(True, MODE_HEAT, t, FAN_AUTO))
+    # --- calor, ventilador automatico
+    for t in HEAT_TEMPS:
+        lg2(u"\u2600 %d\u00b0" % t, lg_state(True, MODE_HEAT, t, FAN_AUTO))
 
-    # --- calor: velocidades de ventilador a 22 C
-    for etiqueta, fan in [("V1_MINIMA", FAN_LOWEST), ("V2_BAJA", FAN_LOW),
-                          ("V3_MEDIA", FAN_MEDIUM), ("V4_MAXIMA", FAN_MAX)]:
-        lg2("CALOR_22_%s" % etiqueta, lg_state(True, MODE_HEAT, 22, fan))
+    # --- calor: velocidades de ventilador
+    for etiqueta, fan in [(u"minima", FAN_LOWEST), (u"baja", FAN_LOW),
+                          (u"media", FAN_MEDIUM), (u"maxima", FAN_MAX)]:
+        lg2(u"\u2600 %d\u00b0 %s" % (FAN_DEMO_TEMP, etiqueta),
+            lg_state(True, MODE_HEAT, FAN_DEMO_TEMP, fan))
 
     # --- resto de modos
-    lg2("SECO_24_AUTO", lg_state(True, MODE_DRY, 24, FAN_AUTO))
-    lg2("AUTO_24", lg_state(True, MODE_AUTO, 24, FAN_AUTO))
-    for etiqueta, fan in [("V2_BAJA", FAN_LOW), ("V3_MEDIA", FAN_MEDIUM),
-                          ("V4_MAXIMA", FAN_MAX)]:
-        lg2("VENTILACION_%s" % etiqueta, lg_state(True, MODE_FAN, 24, fan))
+    lg2(u"\U0001f4a7 Seco 24\u00b0", lg_state(True, MODE_DRY, 24, FAN_AUTO))
+    lg2(u"\u2733 Auto 24\u00b0", lg_state(True, MODE_AUTO, 24, FAN_AUTO))
+    for etiqueta, fan in [(u"baja", FAN_LOW), (u"media", FAN_MEDIUM),
+                          (u"maxima", FAN_MAX)]:
+        lg2(u"\U0001f300 Ventilacion %s" % etiqueta,
+            lg_state(True, MODE_FAN, 24, fan))
 
     # --- velocidades exclusivas del mando AKB74955603, por si acaso
     out.append("# Solo las acepta la variante AKB74955603; probar si las de\n"
                "# arriba no cambian la velocidad.\n")
-    lg2("ALT_FRIO_24_BAJA_AKB74955603",
+    lg2(u"\u2744 24\u00b0 baja (AKB)",
         lg_state(True, MODE_COOL, 24, FAN_LOW_ALT))
-    lg2("ALT_FRIO_24_ALTA_AKB74955603",
+    lg2(u"\u2744 24\u00b0 alta (AKB)",
         lg_state(True, MODE_COOL, 24, FAN_HIGH))
 
     return "".join(out)
